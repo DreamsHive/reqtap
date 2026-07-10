@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+build/
+.output/
+.nuxt/
+.nitro/
+
+# env
+.env
+.env.*
+!.env.example
+
+# adonis
+apps/server/tmp/
+
+# logs & misc
+*.log
+.DS_Store
+coverage/
+.idea/
+.vscode/*
+!.vscode/extensions.json

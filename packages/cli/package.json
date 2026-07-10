@@ -1,0 +1,28 @@
+{
+  "name": "@reqtap/cli",
+  "version": "0.0.1",
+  "description": "Reqtap CLI — forward, tail and replay webhooks from your terminal.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "wh": "./dist/index.mjs",
+    "reqtap": "./dist/index.mjs"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "unbuild",
+    "start": "node dist/index.mjs"
+  },
+  "dependencies": {
+    "@reqtap/shared": "workspace:*",
+    "citty": "^0.1.6",
+    "consola": "^3.4.0",
+    "ofetch": "^1.4.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.0",
+    "unbuild": "^3.5.0"
+  }
+}

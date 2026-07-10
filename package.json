@@ -1,0 +1,26 @@
+{
+  "name": "reqtap",
+  "private": true,
+  "description": "Self-hostable webhook inspector & relay — capture, inspect, replay, and forward webhooks to localhost.",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22",
+    "bun": ">=1.2"
+  },
+  "scripts": {
+    "dev": "bun run --filter '@reqtap/server' --filter '@reqtap/web' dev",
+    "dev:server": "bun run --filter '@reqtap/server' dev",
+    "dev:web": "bun run --filter '@reqtap/web' dev",
+    "build": "bun run --filter '*' build",
+    "test": "bun run --filter '*' test",
+    "typecheck": "bun run --filter '*' typecheck"
+  },
+  "trustedDependencies": [
+    "@parcel/watcher",
+    "@swc/core"
+  ]
+}
