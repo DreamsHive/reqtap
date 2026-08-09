@@ -24,6 +24,16 @@ const requests: Req[] = [
 ]
 
 const selected = ref(0)
+const router = useRouter()
+
+// On mobile the detail panel is hidden, so tapping a row opens the detail route.
+function selectRequest(i: number) {
+  selected.value = i
+  if (import.meta.client && window.matchMedia('(max-width: 767px)').matches) {
+    router.push('/app/request')
+  }
+}
+
 const tabs = ['Body', 'Headers', 'Query', 'Response']
 const activeTab = ref('Body')
 
@@ -44,98 +54,150 @@ const bodyLines = [
   { t: '  "livemode": false', c: 'text-[#e7e7ec]' },
   { t: '}', c: 'text-[#8b949e]' },
 ]
+
+const headers = [
+  { key: 'content-type', value: 'application/json; charset=utf-8' },
+  { key: 'stripe-signature', value: 't=1719402312,v1=5a2b3c…' },
+  { key: 'user-agent', value: 'Stripe/1.0 (+https://stripe.com)' },
+  { key: 'content-length', value: '1204' },
+  { key: 'x-forwarded-for', value: '94.23.11.8' },
+  { key: 'idempotency-key', value: 'evt_1P9x2eKz' },
+]
+
+const responseLines = [
+  { t: '{', c: 'text-[#8b949e]' },
+  { t: '  "received": true', c: 'text-[#7ee787]' },
+  { t: '}', c: 'text-[#8b949e]' },
+]
 </script>
 
 <template>
-  <div class="flex h-full">
-    <!-- Request list column -->
-    <div class="flex w-full shrink-0 flex-col border-r border-[var(--color-line)] bg-white md:w-[400px]">
-      <div class="flex flex-col gap-3 border-b border-[var(--color-line)] px-4 pb-3.5 pt-4">
-        <div class="flex items-center gap-2 rounded-[9px] border border-[var(--color-line)] bg-subtle px-3 py-2">
-          <UIcon name="i-lucide-search" class="size-4 text-gray-400" />
-          <input
-            placeholder="Search requests…"
-            class="w-full bg-transparent text-sm text-ink placeholder:text-gray-400 focus:outline-none"
-          >
+  <div class="flex h-full flex-col">
+    <!-- Sub-header: endpoint switcher + copy url -->
+    <div class="flex items-center justify-between border-b border-[var(--color-line)] bg-white px-4 py-2.5">
+      <EndpointSwitcher />
+      <UButton
+        color="neutral"
+        variant="outline"
+        icon="i-lucide-copy"
+        class="rounded-lg bg-subtle text-[13px] font-medium text-ink"
+      >Copy URL</UButton>
+    </div>
+
+    <div class="flex min-h-0 flex-1">
+      <!-- Request list column -->
+      <div class="flex w-full shrink-0 flex-col border-r border-[var(--color-line)] bg-white md:w-[400px]">
+        <div class="flex flex-col gap-3 border-b border-[var(--color-line)] px-4 pb-3.5 pt-4">
+          <div class="flex items-center gap-2 rounded-[9px] border border-[var(--color-line)] bg-subtle px-3 py-2">
+            <UIcon name="i-lucide-search" class="size-4 text-gray-400" />
+            <input
+              placeholder="Search requests…"
+              class="w-full bg-transparent text-sm text-ink placeholder:text-gray-400 focus:outline-none"
+            >
+          </div>
+          <div class="flex gap-2">
+            <button
+              v-for="f in filters"
+              :key="f"
+              class="rounded-full px-[11px] py-[5px] text-[12px] font-medium transition-colors"
+              :class="
+                activeFilter === f
+                  ? 'bg-brand-500 text-white'
+                  : 'border border-[var(--color-line)] bg-subtle text-gray-500'
+              "
+              @click="activeFilter = f"
+            >
+              {{ f }}
+            </button>
+          </div>
         </div>
-        <div class="flex gap-2">
+
+        <div class="flex-1 overflow-y-auto">
           <button
-            v-for="f in filters"
-            :key="f"
-            class="rounded-full px-[11px] py-[5px] text-[12px] font-medium transition-colors"
-            :class="
-              activeFilter === f
-                ? 'bg-brand-500 text-white'
-                : 'border border-[var(--color-line)] bg-subtle text-gray-500'
-            "
-            @click="activeFilter = f"
+            v-for="(r, i) in requests"
+            :key="i"
+            class="flex w-full flex-col gap-1.5 border-b border-[var(--color-line)] px-4 py-3 text-left transition-colors"
+            :class="selected === i ? 'border-l-2 border-l-brand-500 bg-brand-500/[0.06]' : 'hover:bg-gray-50'"
+            @click="selectRequest(i)"
           >
-            {{ f }}
+            <div class="flex items-center gap-2">
+              <MethodBadge :method="r.method" class="!px-1.5 !py-0.5 !text-[11px]" />
+              <span class="flex-1 truncate text-[13px] font-medium text-ink">{{ r.path }}</span>
+              <span
+                class="text-[12px] font-semibold"
+                :class="r.status < 400 ? 'text-green-600' : 'text-red-500'"
+              >{{ r.status }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-[12px] text-gray-500">{{ r.meta }}</span>
+              <span class="text-[11px] text-gray-400">{{ r.time }}</span>
+            </div>
           </button>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto">
-        <button
-          v-for="(r, i) in requests"
-          :key="i"
-          class="flex w-full flex-col gap-1.5 border-b border-[var(--color-line)] px-4 py-3 text-left transition-colors"
-          :class="selected === i ? 'border-l-2 border-l-brand-500 bg-brand-500/[0.06]' : 'hover:bg-gray-50'"
-          @click="selected = i"
-        >
-          <div class="flex items-center gap-2">
-            <MethodBadge :method="r.method" class="!px-1.5 !py-0.5 !text-[11px]" />
-            <span class="flex-1 truncate text-[13px] font-medium text-ink">{{ r.path }}</span>
-            <span
-              class="text-[12px] font-semibold"
-              :class="r.status < 400 ? 'text-green-600' : 'text-red-500'"
-            >{{ r.status }}</span>
+      <!-- Detail panel -->
+      <div class="hidden flex-1 flex-col gap-5 overflow-y-auto bg-white px-7 pb-6 pt-[22px] md:flex">
+        <div class="flex items-center gap-3">
+          <MethodBadge method="POST" class="!px-2.5 !py-1 !text-[13px]" />
+          <span class="flex-1 text-lg font-semibold text-ink">/webhooks/stripe</span>
+          <UButton
+            color="neutral"
+            variant="outline"
+            icon="i-lucide-rotate-ccw"
+            class="rounded-lg bg-subtle text-[13px] font-medium text-ink"
+          >Replay</UButton>
+          <UButton
+            icon="i-lucide-arrow-right"
+            class="rounded-lg text-[13px] font-semibold"
+          >Forward to localhost</UButton>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <StatusBadge :status="200" dot>Stripe signature verified</StatusBadge>
+          <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">200 OK · 42ms</span>
+          <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">94.23.11.8</span>
+          <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">1.2 KB</span>
+          <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">application/json</span>
+        </div>
+
+        <div class="flex gap-6 border-b border-[var(--color-line)]">
+          <button
+            v-for="t in tabs"
+            :key="t"
+            class="pb-2.5 text-sm font-medium transition-colors"
+            :class="activeTab === t ? 'border-b-2 border-brand-500 font-semibold text-ink' : 'text-gray-500'"
+            @click="activeTab = t"
+          >{{ t }}</button>
+        </div>
+
+        <!-- Body -->
+        <div v-if="activeTab === 'Body'" class="rt-mono flex flex-1 flex-col gap-[3px] rounded-xl bg-[#0c0c12] px-5 py-[18px] text-[13px] leading-[1.72]">
+          <p v-for="(l, i) in bodyLines" :key="i" :class="l.c" class="whitespace-pre">{{ l.t }}</p>
+        </div>
+
+        <!-- Headers -->
+        <div v-else-if="activeTab === 'Headers'" class="overflow-hidden rounded-[10px] border border-[var(--color-line)] bg-subtle">
+          <div
+            v-for="(h, i) in headers"
+            :key="h.key"
+            class="flex items-center border-b border-[var(--color-line)] px-4 py-3 text-[13px] last:border-b-0"
+            :class="i % 2 ? 'bg-white' : ''"
+          >
+            <span class="rt-mono w-[220px] shrink-0 font-semibold text-ink">{{ h.key }}</span>
+            <span class="rt-mono flex-1 text-gray-500">{{ h.value }}</span>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-[12px] text-gray-500">{{ r.meta }}</span>
-            <span class="text-[11px] text-gray-400">{{ r.time }}</span>
-          </div>
-        </button>
-      </div>
-    </div>
+        </div>
 
-    <!-- Detail panel -->
-    <div class="hidden flex-1 flex-col gap-5 overflow-y-auto bg-white px-7 pb-6 pt-[22px] md:flex">
-      <div class="flex items-center gap-3">
-        <MethodBadge method="POST" class="!px-2.5 !py-1 !text-[13px]" />
-        <span class="flex-1 text-lg font-semibold text-ink">/webhooks/stripe</span>
-        <UButton
-          color="neutral"
-          variant="outline"
-          icon="i-lucide-rotate-ccw"
-          class="rounded-lg bg-subtle text-[13px] font-medium text-ink"
-        >Replay</UButton>
-        <UButton
-          icon="i-lucide-arrow-right"
-          class="rounded-lg text-[13px] font-semibold"
-        >Forward to localhost</UButton>
-      </div>
+        <!-- Query -->
+        <div v-else-if="activeTab === 'Query'" class="flex flex-1 items-center justify-center rounded-[10px] border border-[var(--color-line)] bg-subtle py-16">
+          <EmptyState icon="i-lucide-list" title="No query parameters" description="This request was sent without a query string." />
+        </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <StatusBadge :status="200" dot>Stripe signature verified</StatusBadge>
-        <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">200 OK · 42ms</span>
-        <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">94.23.11.8</span>
-        <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">1.2 KB</span>
-        <span class="rounded-full border border-[var(--color-line)] bg-subtle px-2.5 py-1 text-[12px] font-medium text-gray-500">application/json</span>
-      </div>
-
-      <div class="flex gap-6 border-b border-[var(--color-line)]">
-        <button
-          v-for="t in tabs"
-          :key="t"
-          class="pb-2.5 text-sm font-medium transition-colors"
-          :class="activeTab === t ? 'border-b-2 border-brand-500 font-semibold text-ink' : 'text-gray-500'"
-          @click="activeTab = t"
-        >{{ t }}</button>
-      </div>
-
-      <div class="rt-mono flex flex-1 flex-col gap-[3px] rounded-xl bg-[#0c0c12] px-5 py-[18px] text-[13px] leading-[1.72]">
-        <p v-for="(l, i) in bodyLines" :key="i" :class="l.c" class="whitespace-pre">{{ l.t }}</p>
+        <!-- Response -->
+        <div v-else class="rt-mono flex flex-1 flex-col gap-[3px] rounded-xl bg-[#0c0c12] px-5 py-[18px] text-[13px] leading-[1.72]">
+          <p v-for="(l, i) in responseLines" :key="i" :class="l.c" class="whitespace-pre">{{ l.t }}</p>
+        </div>
       </div>
     </div>
   </div>

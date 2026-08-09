@@ -31,11 +31,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           <span>Search…</span>
           <kbd class="rt-mono rounded bg-white px-1.5 py-0.5 text-[11px] text-gray-500 ring-1 ring-[var(--color-line)]">⌘K</kbd>
         </button>
-        <UAvatar
-          src="https://i.pravatar.cc/64?img=13"
-          size="md"
-          class="ring-2 ring-white"
-        />
+        <UserMenu />
       </div>
     </header>
 
