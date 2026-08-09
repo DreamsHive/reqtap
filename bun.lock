@@ -42,6 +42,9 @@
         "nuxt": "^3.17.0",
         "vue": "^3.5.0",
       },
+      "devDependencies": {
+        "@iconify-json/lucide": "^1.2.122",
+      },
     },
     "packages/cli": {
       "name": "@reqtap/cli",
@@ -297,6 +300,8 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
+
+    "@iconify-json/lucide": ["@iconify-json/lucide@1.2.122", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-Dpt+ZbYTyKZqyRkEHmxEcsSsRW9yRTmkaweT2A1hfH7zKHZZ7FKmcn5evTh93ZlkYq2Vpb1YZUBsjc9AxZlcUg=="],
 
     "@iconify/collections": ["@iconify/collections@1.0.708", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-9C1wW0tb8VVdsbAdfZfEYklxE2p+jz9Qrm6Lfx/+lWS8i0QiOJ5QtOoZScvs2MwVpJsViw4VeMcpQU0+eQJrHg=="],
 

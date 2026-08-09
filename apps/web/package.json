@@ -14,5 +14,8 @@
     "@reqtap/shared": "workspace:*",
     "nuxt": "^3.17.0",
     "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.122"
   }
 }
