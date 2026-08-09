@@ -1,5 +1,15 @@
 <script setup lang="ts">
-const emit = defineEmits<{ openPalette: [] }>()
+const paletteOpen = ref(false)
+
+function onKey(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    paletteOpen.value = !paletteOpen.value
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
@@ -12,7 +22,7 @@ const emit = defineEmits<{ openPalette: [] }>()
       <div class="flex items-center gap-3">
         <button
           class="flex items-center gap-2 rounded-[9px] border border-[var(--color-line)] bg-subtle px-3 py-1.5 text-[13px] text-gray-400 hover:bg-gray-100"
-          @click="emit('openPalette')"
+          @click="paletteOpen = true"
         >
           <UIcon name="i-lucide-search" class="size-4" />
           <span>Search…</span>
@@ -33,5 +43,7 @@ const emit = defineEmits<{ openPalette: [] }>()
         <slot />
       </main>
     </div>
+
+    <CommandPalette v-model:open="paletteOpen" />
   </div>
 </template>

@@ -9,13 +9,15 @@ const endpoints = [
   { name: 'clerk-users', url: 'reqtap.dev/t/clk3d1', requests: '156', last: '2h ago', active: true },
   { name: 'legacy-test', url: 'reqtap.dev/t/old000', requests: '0', last: '—', active: false },
 ]
+
+const showCreate = ref(false)
 </script>
 
 <template>
   <div class="flex flex-col gap-[22px] px-8 py-7">
     <PageHeader title="Endpoints" subtitle="Unique URLs that capture incoming webhooks.">
       <template #actions>
-        <UButton icon="i-lucide-plus" class="rounded-[9px] text-sm font-semibold">New endpoint</UButton>
+        <UButton icon="i-lucide-plus" class="rounded-[9px] text-sm font-semibold" @click="showCreate = true">New endpoint</UButton>
       </template>
     </PageHeader>
 
@@ -41,5 +43,7 @@ const endpoints = [
         </span>
       </div>
     </div>
+
+    <NewEndpointModal v-model:open="showCreate" />
   </div>
 </template>
