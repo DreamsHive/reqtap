@@ -49,7 +49,7 @@ const bodyLines = [
 <template>
   <div class="flex h-full">
     <!-- Request list column -->
-    <div class="flex w-[400px] shrink-0 flex-col border-r border-[var(--color-line)] bg-white">
+    <div class="flex w-full shrink-0 flex-col border-r border-[var(--color-line)] bg-white md:w-[400px]">
       <div class="flex flex-col gap-3 border-b border-[var(--color-line)] px-4 pb-3.5 pt-4">
         <div class="flex items-center gap-2 rounded-[9px] border border-[var(--color-line)] bg-subtle px-3 py-2">
           <UIcon name="i-lucide-search" class="size-4 text-gray-400" />
@@ -100,7 +100,7 @@ const bodyLines = [
     </div>
 
     <!-- Detail panel -->
-    <div class="flex flex-1 flex-col gap-5 overflow-y-auto bg-white px-7 pb-6 pt-[22px]">
+    <div class="hidden flex-1 flex-col gap-5 overflow-y-auto bg-white px-7 pb-6 pt-[22px] md:flex">
       <div class="flex items-center gap-3">
         <MethodBadge method="POST" class="!px-2.5 !py-1 !text-[13px]" />
         <span class="flex-1 text-lg font-semibold text-ink">/webhooks/stripe</span>

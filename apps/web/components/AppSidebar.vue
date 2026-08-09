@@ -11,7 +11,7 @@ function isActive(to: string) {
 
 <template>
   <aside
-    class="flex w-[230px] shrink-0 flex-col gap-1 border-r border-[var(--color-line)] bg-subtle px-3.5 py-4"
+    class="hidden w-[230px] shrink-0 flex-col gap-1 border-r border-[var(--color-line)] bg-subtle px-3.5 py-4 md:flex"
   >
     <NuxtLink
       v-for="item in primaryNav"

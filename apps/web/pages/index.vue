@@ -39,11 +39,11 @@ const body = [
         <span class="size-[7px] rounded-full bg-green-500" />
         Open source · Self-hostable · MIT licensed
       </span>
-      <h1 class="text-[72px] font-extrabold leading-[1.02] text-ink">
+      <h1 class="text-[38px] font-extrabold leading-[1.06] text-ink sm:text-[72px] sm:leading-[1.02]">
         Inspect, replay &amp;<br>
         <span class="bg-gradient-to-r from-brand-500 to-violet-500 bg-clip-text text-transparent">forward webhooks.</span>
       </h1>
-      <p class="w-[640px] max-w-full text-[18px] leading-[1.55] text-gray-500">
+      <p class="w-[640px] max-w-full text-[15px] leading-[1.52] text-gray-500 sm:text-[18px] sm:leading-[1.55]">
         A self-hostable tool to capture webhooks, inspect them in real time, replay any request, and forward them
         straight to your localhost. webhook.site + smee.io in one box.
       </p>
@@ -73,7 +73,7 @@ const body = [
     <!-- Inspector preview -->
     <section class="flex w-full flex-col items-center gap-9 px-6 pb-10 pt-16">
       <div class="flex flex-col items-center gap-3 text-center">
-        <h2 class="text-[38px] font-extrabold text-ink">Every request, decoded in real time</h2>
+        <h2 class="text-[28px] font-extrabold text-ink sm:text-[38px]">Every request, decoded in real time</h2>
         <p class="w-[540px] max-w-full text-base leading-[1.5] text-gray-500">
           Headers, body, query and signatures — parsed and pretty-printed the moment a webhook lands.
         </p>
@@ -87,9 +87,9 @@ const body = [
           <div class="flex flex-1 items-center justify-center rounded-md border border-[var(--color-line)] bg-white py-1 text-[12px] text-gray-500">reqtap.dev/t/abc123</div>
           <div class="w-[50px]" />
         </div>
-        <div class="flex">
+        <div class="flex flex-col md:flex-row">
           <!-- list -->
-          <div class="w-[400px] shrink-0 border-r border-[var(--color-line)] bg-subtle">
+          <div class="w-full shrink-0 border-b border-r border-[var(--color-line)] bg-subtle md:w-[400px] md:border-b-0">
             <div class="flex items-center justify-between border-b border-[var(--color-line)] px-[18px] py-4">
               <span class="text-[15px] font-semibold text-ink">Requests</span>
               <StatusBadge :status="200" dot>Live</StatusBadge>
@@ -131,9 +131,9 @@ const body = [
     <section id="features" class="flex w-full flex-col items-center gap-11 px-6 pb-16 pt-20">
       <div class="flex flex-col items-center gap-3.5 text-center">
         <span class="text-[13px] font-semibold tracking-[1.5px] text-brand-500">FEATURES</span>
-        <h2 class="text-[42px] font-extrabold text-ink">Everything you need to tame webhooks</h2>
+        <h2 class="text-[30px] font-extrabold text-ink sm:text-[42px]">Everything you need to tame webhooks</h2>
       </div>
-      <div class="grid w-[1140px] max-w-full grid-cols-3 gap-5">
+      <div class="grid w-[1140px] max-w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="f in features"
           :key="f.title"
@@ -152,7 +152,7 @@ const body = [
     <section class="flex w-full flex-col items-center px-6 pb-20 pt-10">
       <div class="relative flex h-[340px] w-[1140px] max-w-full flex-col items-center justify-center gap-[22px] overflow-hidden rounded-[28px] bg-gradient-to-r from-[#0b0b14] to-[#1e1b3a] py-[72px] text-center">
         <div class="pointer-events-none absolute left-1/2 top-1/2 size-[760px] -translate-x-1/2 rounded-full bg-brand-500/20 blur-[120px]" />
-        <h2 class="relative text-[44px] font-extrabold text-white">Stop debugging webhooks blind</h2>
+        <h2 class="relative px-4 text-[30px] font-extrabold text-white sm:text-[44px]">Stop debugging webhooks blind</h2>
         <p class="relative text-[17px] text-[#a5a3c0]">Spin up Reqtap in one command and see every request the moment it lands.</p>
         <div class="relative flex items-center gap-3 pt-2">
           <UButton to="https://github.com/DreamsHive/reqtap" target="_blank" icon="i-lucide-star" size="lg" class="rounded-[10px] bg-gradient-to-r from-brand-500 to-violet-500 text-[15px] font-semibold">Star on GitHub</UButton>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { primaryNav } from '~/composables/useNav'
+
+const route = useRoute()
 const paletteOpen = ref(false)
 
 function onKey(e: KeyboardEvent) {
@@ -39,10 +42,23 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     <!-- Body -->
     <div class="flex flex-1 items-stretch overflow-hidden">
       <AppSidebar />
-      <main class="flex-1 overflow-y-auto">
+      <main class="flex-1 overflow-y-auto pb-16 md:pb-0">
         <slot />
       </main>
     </div>
+
+    <!-- Mobile bottom nav -->
+    <nav class="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-[var(--color-line)] bg-white px-8 pb-5 pt-3.5 md:hidden">
+      <NuxtLink
+        v-for="item in primaryNav"
+        :key="item.to"
+        :to="item.to"
+        class="flex flex-col items-center"
+        :class="route.path.startsWith(item.to) && (item.to !== '/app' || route.path === '/app') ? 'text-brand-500' : 'text-gray-400'"
+      >
+        <UIcon :name="item.icon" class="size-6" />
+      </NuxtLink>
+    </nav>
 
     <CommandPalette v-model:open="paletteOpen" />
   </div>

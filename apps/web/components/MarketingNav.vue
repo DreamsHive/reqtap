@@ -8,9 +8,9 @@ const links = [
 </script>
 
 <template>
-  <nav class="flex w-full items-center justify-between px-10 py-[22px]">
+  <nav class="flex w-full items-center justify-between px-5 py-4 sm:px-10 sm:py-[22px]">
     <AppLogo :size="26" class="[&_span]:text-[20px]" />
-    <div class="flex items-center gap-7">
+    <div class="hidden items-center gap-7 md:flex">
       <NuxtLink
         v-for="l in links"
         :key="l.label"
@@ -24,5 +24,8 @@ const links = [
         class="rounded-lg bg-ink text-sm font-semibold text-white hover:bg-ink/90"
       >GitHub</UButton>
     </div>
+    <button class="text-ink md:hidden" aria-label="Menu">
+      <UIcon name="i-lucide-menu" class="size-6" />
+    </button>
   </nav>
 </template>
