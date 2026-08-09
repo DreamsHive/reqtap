@@ -16,10 +16,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-canvas">
+  <div class="flex h-screen flex-col overflow-hidden bg-canvas">
     <!-- Topbar -->
     <header
-      class="flex items-center justify-between border-b border-[var(--color-line)] bg-white px-5 py-3"
+      class="flex shrink-0 items-center justify-between border-b border-[var(--color-line)] bg-white px-5 py-3"
     >
       <AppLogo />
       <div class="flex items-center gap-3">
