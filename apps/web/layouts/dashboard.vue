@@ -29,7 +29,7 @@ const emit = defineEmits<{ openPalette: [] }>()
     <!-- Body -->
     <div class="flex flex-1 items-stretch overflow-hidden">
       <AppSidebar />
-      <main class="flex-1 overflow-y-auto px-8 py-7">
+      <main class="flex-1 overflow-y-auto">
         <slot />
       </main>
     </div>

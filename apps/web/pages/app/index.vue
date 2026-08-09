@@ -32,7 +32,7 @@ const statusCodes = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 px-8 py-7">
     <PageHeader title="Overview" subtitle="Traffic across all your endpoints.">
       <template #actions>
         <UButton
