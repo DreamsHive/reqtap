@@ -1,2 +1,56 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
+
+/* ── Reqtap design tokens (from Figma design system) ───────────────── */
+@theme {
+  --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Brand indigo ramp */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  /* Neutral surfaces */
+  --color-ink: #0b0b12;
+  --color-surface: #ffffff;
+  --color-canvas: #fcfcfd;
+  --color-subtle: #fbfbfc;
+  --color-line: #e7e7ec;
+
+  /* HTTP method accents */
+  --color-method-get: #0ea5e9;
+  --color-method-post: #6366f1;
+  --color-method-put: #f59e0b;
+  --color-method-delete: #ef4444;
+
+  --radius-card: 16px;
+  --radius-control: 9px;
+}
+
+:root {
+  --ui-radius: 0.5rem;
+}
+
+html,
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Reusable primitives ---------------------------------------------------- */
+.rt-card {
+  @apply rounded-2xl border border-[var(--color-line)] bg-white;
+}
+.rt-mono {
+  font-family: var(--font-mono);
+}
