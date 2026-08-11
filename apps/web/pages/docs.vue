@@ -18,10 +18,10 @@ const active = 'Quick start'
         <span class="rounded-md bg-brand-500/10 px-2 py-[3px] text-[12px] font-semibold text-brand-500">Docs</span>
       </div>
       <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
-        <a href="#" class="hover:text-ink">Guides</a>
-        <a href="#" class="hover:text-ink">API</a>
-        <a href="#" class="hover:text-ink">CLI</a>
-        <a href="#" class="hover:text-ink">GitHub</a>
+        <NuxtLink to="/docs" class="hover:text-ink">Guides</NuxtLink>
+        <NuxtLink to="/docs" class="hover:text-ink">API</NuxtLink>
+        <NuxtLink to="/docs" class="hover:text-ink">CLI</NuxtLink>
+        <a href="https://github.com/DreamsHive/reqtap" target="_blank" rel="noopener noreferrer" class="hover:text-ink">GitHub</a>
       </nav>
     </header>
 

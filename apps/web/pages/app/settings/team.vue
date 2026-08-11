@@ -8,13 +8,15 @@ const members = [
   { name: 'Dimas Prakoso', email: 'dimas@team.io', role: 'Member', img: 33, pending: false },
   { name: 'jane@contractor.dev', email: 'Invitation pending', role: 'Member', img: 5, pending: true },
 ]
+
+const showInvite = ref(false)
 </script>
 
 <template>
   <div class="flex flex-col gap-[22px] px-8 py-7">
     <PageHeader title="Team members" subtitle="Invite people to collaborate on your endpoints.">
       <template #actions>
-        <UButton icon="i-lucide-user-plus" class="rounded-[9px] text-sm font-semibold">Invite member</UButton>
+        <UButton icon="i-lucide-user-plus" class="rounded-[9px] text-sm font-semibold" @click="showInvite = true">Invite member</UButton>
       </template>
     </PageHeader>
 
@@ -35,5 +37,7 @@ const members = [
         </button>
       </div>
     </div>
+
+    <InviteMemberModal v-model:open="showInvite" />
   </div>
 </template>

@@ -43,8 +43,8 @@ const releases = [
       <AppLogo />
       <nav class="flex items-center gap-6 text-sm font-medium text-gray-500">
         <NuxtLink to="/docs" class="hover:text-ink">Docs</NuxtLink>
-        <a href="#" class="hover:text-ink">Changelog</a>
-        <a href="#" class="hover:text-ink">GitHub</a>
+        <NuxtLink to="/changelog" class="font-semibold text-ink">Changelog</NuxtLink>
+        <a href="https://github.com/DreamsHive/reqtap" target="_blank" rel="noopener noreferrer" class="hover:text-ink">GitHub</a>
       </nav>
     </header>
 

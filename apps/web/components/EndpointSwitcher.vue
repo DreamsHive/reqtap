@@ -9,9 +9,16 @@ const endpoints = [
   { name: 'clerk-users', slug: '/t/clk3d1' },
 ]
 
+const showCreate = ref(false)
+
 function select(name: string) {
   current.value = name
   open.value = false
+}
+
+function openCreate() {
+  open.value = false
+  showCreate.value = true
 }
 </script>
 
@@ -52,10 +59,12 @@ function select(name: string) {
         </span>
         <UIcon v-if="current === e.name" name="i-lucide-check" class="size-4 text-brand-500" />
       </button>
-      <button class="flex w-full items-center gap-2.5 border-t border-[var(--color-line)] bg-subtle px-3 py-3 text-left">
+      <button class="flex w-full items-center gap-2.5 border-t border-[var(--color-line)] bg-subtle px-3 py-3 text-left" @click="openCreate">
         <UIcon name="i-lucide-plus" class="size-4 text-brand-500" />
         <span class="text-[13px] font-semibold text-brand-500">Create endpoint</span>
       </button>
     </div>
+
+    <NewEndpointModal v-model:open="showCreate" />
   </div>
 </template>

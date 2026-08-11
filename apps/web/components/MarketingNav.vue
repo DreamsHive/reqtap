@@ -17,12 +17,11 @@ const links = [
         :to="l.to"
         class="text-sm font-medium text-gray-500 hover:text-ink"
       >{{ l.label }}</NuxtLink>
+      <NuxtLink to="/auth/login" class="text-sm font-medium text-gray-500 hover:text-ink">Sign in</NuxtLink>
       <UButton
-        to="https://github.com/DreamsHive/reqtap"
-        target="_blank"
-        icon="i-lucide-star"
+        to="/auth/register"
         class="rounded-lg bg-ink text-sm font-semibold text-white hover:bg-ink/90"
-      >GitHub</UButton>
+      >Get started</UButton>
     </div>
     <button class="text-ink md:hidden" aria-label="Menu">
       <UIcon name="i-lucide-menu" class="size-6" />

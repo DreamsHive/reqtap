@@ -1,5 +1,8 @@
 <script setup lang="ts">
+definePageMeta({ layout: false })
 useHead({ title: 'Request · Reqtap' })
+const showForward = ref(false)
+const showReplay = ref(false)
 
 const tabs = ['Body', 'Headers', 'Query']
 const activeTab = ref('Body')
@@ -43,11 +46,25 @@ const bodyLines = [
         <p v-for="(l, i) in bodyLines" :key="i" :class="l.c" class="whitespace-pre">{{ l.t }}</p>
       </div>
 
-      <UButton
-        block
-        icon="i-lucide-arrow-right"
-        class="rounded-[10px] py-3.5 text-sm font-semibold"
-      >Forward to localhost</UButton>
+      <div class="flex flex-col gap-2.5">
+        <UButton
+          block
+          icon="i-lucide-arrow-right"
+          class="rounded-[10px] py-3.5 text-sm font-semibold"
+          @click="showForward = true"
+        >Forward to localhost</UButton>
+        <UButton
+          block
+          color="neutral"
+          variant="outline"
+          icon="i-lucide-rotate-ccw"
+          class="rounded-[10px] bg-white py-3.5 text-sm font-semibold text-ink"
+          @click="showReplay = true"
+        >Replay</UButton>
+      </div>
     </div>
+
+    <ConnectCliModal v-model:open="showForward" />
+    <ReplayModal v-model:open="showReplay" />
   </div>
 </template>

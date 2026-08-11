@@ -36,6 +36,8 @@ function selectRequest(i: number) {
 
 const tabs = ['Body', 'Headers', 'Query', 'Response']
 const activeTab = ref('Body')
+const showForward = ref(false)
+const showReplay = ref(false)
 
 const bodyLines = [
   { t: '{', c: 'text-[#8b949e]' },
@@ -146,10 +148,12 @@ const responseLines = [
             variant="outline"
             icon="i-lucide-rotate-ccw"
             class="rounded-lg bg-subtle text-[13px] font-medium text-ink"
+            @click="showReplay = true"
           >Replay</UButton>
           <UButton
             icon="i-lucide-arrow-right"
             class="rounded-lg text-[13px] font-semibold"
+            @click="showForward = true"
           >Forward to localhost</UButton>
         </div>
 
@@ -200,5 +204,8 @@ const responseLines = [
         </div>
       </div>
     </div>
+
+    <ConnectCliModal v-model:open="showForward" />
+    <ReplayModal v-model:open="showReplay" />
   </div>
 </template>

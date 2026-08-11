@@ -7,13 +7,15 @@ const keys = [
   { name: 'CI pipeline', key: 'rqx_live_••••••••9c1b', created: 'Mar 18, 2026', used: '1 day ago' },
   { name: 'Local dev', key: 'rqx_test_••••••••3d0e', created: 'Mar 2, 2026', used: '3 weeks ago' },
 ]
+
+const showCreate = ref(false)
 </script>
 
 <template>
   <div class="flex flex-col gap-[22px] px-8 py-7">
     <PageHeader title="API keys" subtitle="Create keys to manage endpoints and pull analytics via the API.">
       <template #actions>
-        <UButton icon="i-lucide-plus" class="rounded-[9px] text-sm font-semibold">Create key</UButton>
+        <UButton icon="i-lucide-plus" class="rounded-[9px] text-sm font-semibold" @click="showCreate = true">Create key</UButton>
       </template>
     </PageHeader>
 
@@ -37,5 +39,7 @@ const keys = [
         <button class="w-[80px] text-left text-[13px] font-semibold text-red-600 hover:underline">Revoke</button>
       </div>
     </div>
+
+    <CreateApiKeyModal v-model:open="showCreate" />
   </div>
 </template>

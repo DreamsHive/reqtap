@@ -1,5 +1,14 @@
 <script setup lang="ts">
 useHead({ title: 'Get started · Reqtap' })
+
+const url = 'reqtap.dev/t/abc123'
+const copied = ref(false)
+
+async function copy() {
+  await navigator.clipboard.writeText(`https://${url}`)
+  copied.value = true
+  setTimeout(() => (copied.value = false), 2000)
+}
 </script>
 
 <template>
@@ -29,7 +38,7 @@ useHead({ title: 'Get started · Reqtap' })
 
         <div class="flex w-full items-center gap-2.5 rounded-xl border border-brand-500/35 bg-brand-500/[0.06] py-2 pl-4 pr-2">
           <span class="rt-mono flex-1 text-[15px] font-semibold text-brand-500">reqtap.dev/t/abc123</span>
-          <UButton icon="i-lucide-copy" class="rounded-lg text-[13px] font-semibold">Copy</UButton>
+          <UButton icon="i-lucide-copy" class="rounded-lg text-[13px] font-semibold" @click="copy">{{ copied ? '✓ Copied!' : 'Copy' }}</UButton>
         </div>
 
         <div class="w-full overflow-hidden rounded-xl border border-[#26262e] bg-[#0c0c12]">
@@ -52,8 +61,9 @@ useHead({ title: 'Get started · Reqtap' })
           <span class="size-2 animate-pulse rounded-full bg-amber-400" /> Listening…
         </span>
         <div class="flex items-center gap-2">
-          <UButton variant="ghost" color="neutral" class="rounded-[9px] text-[13px] font-medium text-gray-500">Skip for now</UButton>
+          <UButton to="/app" variant="ghost" color="neutral" class="rounded-[9px] text-[13px] font-medium text-gray-500">Skip for now</UButton>
           <UButton
+            to="/app"
             trailing-icon="i-lucide-arrow-right"
             class="rounded-[9px] bg-gradient-to-r from-brand-500 to-violet-500 text-[13px] font-semibold"
           >Continue</UButton>

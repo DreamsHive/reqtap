@@ -3,6 +3,13 @@ definePageMeta({ layout: 'dashboard' })
 useHead({ title: 'Waiting for requests · Reqtap' })
 
 const url = 'https://reqtap.dev/t/abc123'
+const copied = ref(false)
+
+async function copy() {
+  await navigator.clipboard.writeText(url)
+  copied.value = true
+  setTimeout(() => (copied.value = false), 2000)
+}
 </script>
 
 <template>
@@ -15,7 +22,9 @@ const url = 'https://reqtap.dev/t/abc123'
 
     <div class="flex w-[520px] items-center gap-2.5 rounded-[10px] border border-[var(--color-line)] bg-white py-2 pl-4 pr-2">
       <span class="rt-mono flex-1 text-left text-sm font-medium text-brand-500">{{ url }}</span>
-      <UButton class="rounded-lg text-[13px] font-semibold">Copy</UButton>
+      <UButton class="rounded-lg text-[13px] font-semibold" @click="copy">
+        {{ copied ? '✓ Copied!' : 'Copy' }}
+      </UButton>
     </div>
 
     <p class="text-[12px] font-medium text-gray-400">Or send a test request:</p>

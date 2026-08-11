@@ -11,6 +11,7 @@ const secret = ref('whsec_••••••••••••••••')
 const retention = ref('30 days')
 const verify = ref(true)
 const autoExpire = ref(false)
+const showDelete = ref(false)
 </script>
 
 <template>
@@ -53,8 +54,10 @@ const autoExpire = ref(false)
           <p class="text-sm font-semibold text-red-700">Delete this endpoint</p>
           <p class="text-[12px] text-red-600">All captured requests will be permanently removed.</p>
         </div>
-        <UButton color="error" class="rounded-lg text-[13px] font-semibold">Delete endpoint</UButton>
+        <UButton color="error" class="rounded-lg text-[13px] font-semibold" @click="showDelete = true">Delete endpoint</UButton>
       </div>
     </div>
+
+    <DeleteEndpointDialog v-model:open="showDelete" />
   </div>
 </template>
