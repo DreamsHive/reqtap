@@ -9,12 +9,13 @@ type Client = {
 class RealtimeBroker {
   #clients = new Map<string, Set<Client>>()
 
-  subscribe(token: string, response: ServerResponse, onClose: () => void) {
+  subscribe(token: string, response: ServerResponse, onClose: () => void, headers: Record<string, string> = {}) {
     response.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
       Connection: 'keep-alive',
       'X-Accel-Buffering': 'no',
+      ...headers,
     })
 
     response.write(`event: ready\ndata: ${JSON.stringify({ token })}\n\n`)

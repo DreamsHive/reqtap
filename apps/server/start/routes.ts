@@ -394,8 +394,10 @@ router.get('/api/events/:token', async (ctx) => {
     return ctx.response.notFound({ error: 'Endpoint not found' })
   }
 
+  const corsHeaders = eventStreamCorsHeaders(ctx)
+
   return new Promise<void>((resolve) => {
-    realtime.subscribe(ctx.params.token, ctx.response.response, resolve)
+    realtime.subscribe(ctx.params.token, ctx.response.response, resolve, corsHeaders)
     ctx.request.request.on('close', resolve)
   })
 })
@@ -727,6 +729,22 @@ function bearerToken(ctx: HttpContext) {
 function endpointUrl(token: string) {
   const baseUrl = env.get('APP_URL') ?? `http://${env.get('HOST')}:${env.get('PORT')}`
   return `${baseUrl.replace(/\/$/, '')}/t/${token}`
+}
+
+function eventStreamCorsHeaders(ctx: HttpContext): Record<string, string> {
+  const origin = ctx.request.header('origin')
+
+  if (!origin) {
+    return {
+      'Access-Control-Allow-Origin': '*',
+    }
+  }
+
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    Vary: 'Origin',
+  }
 }
 
 function capturedPath(url: string, token: string) {
