@@ -2,7 +2,7 @@
 const links = [
   { label: 'Features', to: '/#features' },
   { label: 'Docs', to: '/docs' },
-  { label: 'CLI', to: '/#cli' },
+  { label: 'CLI', to: '/docs/cli' },
   { label: 'Self-host', to: '/#self-host' },
 ]
 </script>

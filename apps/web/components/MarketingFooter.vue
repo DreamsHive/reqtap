@@ -6,7 +6,7 @@ const cols = [
     title: 'Product',
     links: [
       { label: 'Features', to: '/#features' },
-      { label: 'CLI', to: '/#cli' },
+      { label: 'CLI', to: '/docs/cli' },
       { label: 'Self-host', to: '/#self-host' },
       { label: 'Changelog', to: '/changelog' },
     ],
@@ -15,8 +15,8 @@ const cols = [
     title: 'Resources',
     links: [
       { label: 'Docs', to: '/docs' },
-      { label: 'API Reference', to: '/docs' },
-      { label: 'Guides', to: '/docs' },
+      { label: 'API Reference', to: '/docs/api' },
+      { label: 'Guides', to: '/docs/quick-start' },
       { label: 'Status', to: GH, ext: true },
     ],
   },
