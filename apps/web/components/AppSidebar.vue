@@ -2,10 +2,21 @@
 import { primaryNav, secondaryNav } from '~/composables/useNav'
 
 const route = useRoute()
+const navItems = [...primaryNav, ...secondaryNav]
+
+function matchesRoute(to: string) {
+  if (to === '/app') return route.path === '/app'
+  return route.path === to || route.path.startsWith(`${to}/`)
+}
+
+const activePath = computed(() => {
+  return navItems
+    .filter((item) => matchesRoute(item.to))
+    .sort((a, b) => b.to.length - a.to.length)[0]?.to
+})
 
 function isActive(to: string) {
-  if (to === '/app') return route.path === '/app'
-  return route.path.startsWith(to)
+  return activePath.value === to
 }
 </script>
 
