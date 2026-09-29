@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Small rounded pill with a leading dot — used for Active/Paused/result states.
 withDefaults(
-  defineProps<{ tone?: 'success' | 'danger' | 'neutral' }>(),
+  defineProps<{ tone?: 'success' | 'danger' | 'neutral' | 'warning' }>(),
   { tone: 'neutral' },
 )
 
@@ -9,6 +9,7 @@ const map = {
   success: 'text-green-700 bg-green-500/12',
   danger: 'text-red-700 bg-red-500/12',
   neutral: 'text-gray-500 bg-gray-400/15',
+  warning: 'text-amber-700 bg-amber-500/14',
 }
 </script>
 

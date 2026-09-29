@@ -12,6 +12,35 @@
 
 ---
 
+## Implementation Status — v0.1
+
+Current v0.1 cut-line is the core self-hostable loop:
+
+- ✅ Endpoint creation and webhook ingest at `ANY /t/:token`.
+- ✅ Raw body preservation, body cap, per-endpoint rate limiting, retention expiry.
+- ✅ Real-time request delivery via SSE channel per token.
+- ✅ Dashboard wired to live API data for Overview, Inspector, Endpoints, and Replays.
+- ✅ CLI `login`, `new`, `tail`, `forward`, and `replay`.
+- ✅ Replay engine with persisted replay history.
+- ✅ Stripe, GitHub, Shopify, and Clerk signature verification.
+- ✅ Email/password auth with optional `AUTH_REQUIRED=true` API enforcement.
+- ✅ Password reset flow with SMTP delivery and development fallback links.
+- ✅ API keys with create/revoke, one-time secret display, and bearer-token auth.
+- ✅ Team invites and role updates for Owner/Admin/Member.
+- ✅ Notification preferences, event log, and optional SMTP delivery.
+- ✅ OpenAPI JSON and Scalar API reference.
+- ✅ CLI relay reconnect backfill with persisted cursors for `tail` and `forward`.
+- ✅ Docker Compose stack for MongoDB, API server, and web dashboard.
+
+Deferred to v1.1:
+
+- GitHub OAuth.
+- Advanced server-side delivery queue for long offline relay windows.
+
+Implementation note: v0.1 uses the MongoDB Node driver behind a local storage service and SSE for real-time delivery. The service boundary is intentionally small so it can be swapped to `adonis-odm`/Transmit later without changing the product surface.
+
+---
+
 ## 1. Background & Problem
 
 Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the same problems over and over:
@@ -36,7 +65,7 @@ Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the sam
 - **G1** — Capture any webhook via a unique URL and display it in real time (< 1 second) on the dashboard.
 - **G2** — Relay live requests to the developer's localhost with a single CLI command.
 - **G3** — Replay/resend any stored request to any target.
-- **G4** — Automatic signature verification (Stripe & GitHub) with clear indicators.
+- **G4** — Automatic signature verification (Stripe, GitHub, Shopify, and Clerk) with clear indicators.
 - **G5** — Self-host with a single command (`docker compose up -d`).
 - **G6** — Time-to-first-value < 2 minutes (try it without signup via `npx`).
 
@@ -61,7 +90,7 @@ Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the sam
 2. As a developer, I see **incoming requests in real time** without refreshing — method, path, headers, query, body (pretty-printed), IP, size, latency.
 3. As a developer, I run `npx wh forward <token> --to localhost:3000` and **live requests are forwarded** to my local server, with the local response status shown in the terminal.
 4. As a developer, I can **replay** any request to any target, as many times as I need.
-5. As a developer, I see a **signature verification badge** (valid/invalid) on Stripe/GitHub requests, with a warning when verification fails.
+5. As a developer, I see a **signature verification badge** (valid/invalid) on Stripe/GitHub/Shopify/Clerk requests, with a warning when verification fails.
 6. As a developer, I can **search & filter** request history (method, provider, status, payload contents).
 7. As a developer, I can **configure a custom response** (status/body/headers) per endpoint.
 8. As an admin, I can **invite team members** and manage API keys.
@@ -77,13 +106,13 @@ Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the sam
 - Body size limit (default 1 MB) + per-endpoint rate limiting.
 
 ### 5.2 Real-time
-- Broadcast new requests over WebSocket (channel per token); SSE fallback.
+- Broadcast new requests over SSE (channel per token); WebSocket/Transmit can be added later if relay acknowledgements require bidirectional transport.
 - Dashboard shows new requests in < 1 second without refresh.
 
 ### 5.3 Relay CLI (`wh`)
 - `wh login` — authenticate the CLI (API key).
 - `wh new [--name]` — create an endpoint, print its URL.
-- `wh forward <token> --to <url>` — subscribe over WS, re-POST every request (identical method/headers/body) to the target; print status + latency; **auto-reconnect**.
+- `wh forward <token> --to <url>` — subscribe over SSE, re-POST every request (identical method/headers/body) to the target; print status + latency; **auto-reconnect** with cursor backfill.
 - `wh tail <token>` — live request view in the terminal.
 - `wh replay <requestId> --to <url>` — resend from the CLI.
 - Distribution: `npx @reqtap/cli` (no install required).
@@ -93,14 +122,14 @@ Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the sam
 - Replay history is stored (target, result, latency) — Replays page.
 
 ### 5.5 Signature verification
-- Auto-detect via headers (`Stripe-Signature`, `X-Hub-Signature-256`).
+- Auto-detect via headers (`Stripe-Signature`, `X-Hub-Signature-256`, `X-Shopify-Hmac-Sha256`, `Svix-*`).
 - Verify against the endpoint's signing secret; ✅ verified / ❌ invalid badge + warning banner.
-- v1: Stripe, GitHub. (v1.1: Shopify, Clerk.)
+- v1: Stripe, GitHub, Shopify, Clerk.
 
 ### 5.6 Management & misc
 - Endpoint CRUD (name, custom slug, custom response, retention, pause).
 - Request search & filter; pagination.
-- Auth (email/password + GitHub OAuth via better-auth); API keys (create/revoke, shown once); team invites with roles (Owner/Admin/Member).
+- Auth (email/password + password reset; GitHub OAuth later); API keys (create/revoke, shown once); team invites with roles (Owner/Admin/Member).
 - Analytics overview: total requests, success rate, latency, top endpoints, status-code breakdown.
 - Data retention & auto-expiry (default 30 days, configurable).
 - Email notifications: failed forwards, failed signatures, quiet endpoints (opt-in per user).
@@ -108,9 +137,9 @@ Developers integrating webhooks (Stripe, GitHub, Shopify, etc.) run into the sam
 ## 6. Technical Architecture
 
 ```
-Provider ──POST──▶ Ingest (AdonisJS) ──▶ MongoDB (adonis-odm)
+Provider ──POST──▶ Ingest (AdonisJS) ──▶ MongoDB
                         │
-                        ├──▶ WebSocket broadcast ──▶ Dashboard (Nuxt 3)
+                        ├──▶ SSE broadcast ──▶ Dashboard (Nuxt 3)
                         │                        └─▶ CLI (wh forward) ──▶ localhost
                         └──▶ Replay engine
 ```
@@ -118,12 +147,12 @@ Provider ──POST──▶ Ingest (AdonisJS) ──▶ MongoDB (adonis-odm)
 | Layer | Technology | Rationale |
 |---|---|---|
 | Server | **AdonisJS v6** + TypeScript | Company ecosystem; built-in WS & validators |
-| Database | **MongoDB** via **adonis-odm** | Schema-less fits arbitrary payloads; dogfooding |
-| Real-time | **@adonisjs/transmit** (SSE/WS) | Channel per token |
+| Database | **MongoDB** via Node driver | Schema-less fits arbitrary payloads; small storage service keeps ODM migration easy |
+| Real-time | **SSE** | Channel per token; simple browser/CLI streaming for v0.1 |
 | Frontend | **Nuxt 3 + Nuxt UI** + Lucide icons | Matches the Figma design system |
 | CLI | **Node + citty + ws** | Lightweight, `npx`-able |
-| Auth | **better-auth** | Company ecosystem |
-| API docs | **open-swagger** (Scalar UI) | Dogfooding |
+| Auth | Built-in email/password + API keys now; **better-auth/GitHub OAuth** later | Keeps self-host auth usable immediately |
+| API docs | Built-in OpenAPI JSON + **Scalar UI** | Self-contained API reference for self-host installs |
 | Deploy | **Docker Compose** (app + mongo) | One-command self-host |
 
 **Repo structure:** Bun workspaces monorepo — `apps/server`, `apps/web`, `packages/cli`, `packages/shared`.
@@ -132,9 +161,9 @@ Provider ──POST──▶ Ingest (AdonisJS) ──▶ MongoDB (adonis-odm)
 ```
 Endpoint { token(unique), name, slug?, responseConfig, provider?, signingSecret?,
            retentionDays, isActive, expiresAt?, teamId, createdAt }
-Request  { endpointId(idx), method, path, query, headers, bodyRaw, bodySize,
+Request  { endpointId(idx), teamId(idx), method, path, query, headers, bodyRaw, bodySize,
            contentType, ip, provider?, signatureValid?, createdAt(idx) }
-Replay   { requestId, targetUrl, resultStatus, latencyMs, createdAt }
+Replay   { requestId, teamId(idx), targetUrl, resultStatus, latencyMs, createdAt }
 ```
 
 ## 7. Design

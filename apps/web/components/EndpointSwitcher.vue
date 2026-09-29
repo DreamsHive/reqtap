@@ -1,24 +1,34 @@
 <script setup lang="ts">
-const open = ref(false)
-const current = ref('stripe-prod')
+import type { Endpoint } from '@reqtap/shared'
+import type { ApiList } from '~/composables/useReqtapApi'
 
-const endpoints = [
-  { name: 'stripe-prod', slug: '/t/abc123' },
-  { name: 'github-ci', slug: '/t/gh9f2k' },
-  { name: 'shopify-orders', slug: '/t/shp77x' },
-  { name: 'clerk-users', slug: '/t/clk3d1' },
-]
+const open = ref(false)
+const current = ref('')
+const endpoints = ref<Endpoint[]>([])
 
 const showCreate = ref(false)
 
-function select(name: string) {
-  current.value = name
+onMounted(refreshEndpoints)
+
+watchEffect(() => {
+  if (!current.value && endpoints.value[0]) {
+    current.value = endpoints.value[0].name
+  }
+})
+
+function select(endpoint: Endpoint) {
+  current.value = endpoint.name
   open.value = false
 }
 
 function openCreate() {
   open.value = false
   showCreate.value = true
+}
+
+async function refreshEndpoints() {
+  const result = await authFetch<ApiList<Endpoint>>('/api/endpoints')
+  endpoints.value = result.data
 }
 </script>
 
@@ -27,15 +37,15 @@ function openCreate() {
     <button
       class="flex items-center gap-2 rounded-lg border-[1.5px] bg-white py-2 pl-3 pr-2.5 text-[13px] font-medium text-ink"
       :class="open ? 'border-brand-500' : 'border-[var(--color-line)]'"
-      @click="open = !open"
+      @click="() => { open = !open }"
     >
       <span class="size-[7px] rounded-full bg-green-500" />
-      {{ current }}
+      {{ current || 'No endpoint' }}
       <UIcon name="i-lucide-chevron-down" class="size-3.5 text-gray-400" />
     </button>
 
     <!-- click-away backdrop -->
-    <div v-if="open" class="fixed inset-0 z-30" @click="open = false" />
+    <div v-if="open" class="fixed inset-0 z-30" @click="() => { open = false }" />
 
     <div
       v-if="open"
@@ -47,15 +57,15 @@ function openCreate() {
       </div>
       <button
         v-for="e in endpoints"
-        :key="e.name"
+        :key="e.token"
         class="flex w-full items-center gap-2.5 px-3 py-2.5 text-left"
         :class="current === e.name ? 'bg-brand-500/[0.06]' : 'hover:bg-gray-50'"
-        @click="select(e.name)"
+        @click="select(e)"
       >
         <span class="size-[7px] rounded-full bg-green-500" />
         <span class="flex flex-1 flex-col">
           <span class="text-[13px] font-medium text-ink">{{ e.name }}</span>
-          <span class="rt-mono text-[11px] text-gray-500">{{ e.slug }}</span>
+          <span class="rt-mono text-[11px] text-gray-500">/t/{{ e.token }}</span>
         </span>
         <UIcon v-if="current === e.name" name="i-lucide-check" class="size-4 text-brand-500" />
       </button>
@@ -65,6 +75,6 @@ function openCreate() {
       </button>
     </div>
 
-    <NewEndpointModal v-model:open="showCreate" />
+    <NewEndpointModal v-model:open="showCreate" @created="refreshEndpoints" />
   </div>
 </template>

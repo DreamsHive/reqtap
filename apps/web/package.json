@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt build",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "typecheck": "nuxt typecheck"
+    "dev": "bun --bun nuxt dev",
+    "build": "bun --bun nuxt build",
+    "generate": "bun --bun nuxt generate",
+    "preview": "bun --bun nuxt preview",
+    "typecheck": "bun --bun nuxt typecheck"
   },
   "dependencies": {
     "@nuxt/ui": "^3.3.0",
@@ -16,6 +16,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.122"
+    "@iconify-json/lucide": "^1.2.122",
+    "vue-tsc": "^3.3.11"
   }
 }

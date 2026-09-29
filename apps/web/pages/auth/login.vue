@@ -2,6 +2,27 @@
 useHead({ title: 'Sign in · Reqtap' })
 const email = ref('')
 const password = ref('')
+const pending = ref(false)
+const error = ref('')
+const router = useRouter()
+
+async function login() {
+  pending.value = true
+  error.value = ''
+
+  try {
+    const result = await $fetch<{ data: unknown; token: string }>(apiUrl('/api/auth/login'), {
+      method: 'POST',
+      body: { email: email.value, password: password.value },
+    })
+    setAuthToken(result.token)
+    await router.push('/app')
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Sign in failed'
+  } finally {
+    pending.value = false
+  }
+}
 </script>
 
 <template>
@@ -9,10 +30,10 @@ const password = ref('')
     <UButton
       block
       icon="i-lucide-github"
-      to="/app"
+      disabled
       class="rounded-[10px] bg-ink py-3 text-sm font-semibold text-white hover:bg-ink/90"
     >
-      Continue with GitHub
+      GitHub OAuth coming soon
     </UButton>
     <AuthDivider />
     <AuthInput v-model="email" label="Email" type="email" placeholder="you@company.com" />
@@ -30,7 +51,13 @@ const password = ref('')
         class="w-full rounded-[9px] border border-[var(--color-line)] bg-subtle px-[13px] py-[11px] text-sm text-ink placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
       >
     </div>
-    <UButton block to="/app" class="rounded-[10px] bg-gradient-to-r from-brand-500 to-violet-500 py-3 text-[15px] font-semibold">
+    <p v-if="error" class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[13px] font-medium text-red-600">{{ error }}</p>
+    <UButton
+      block
+      class="rounded-[10px] bg-gradient-to-r from-brand-500 to-violet-500 py-3 text-[15px] font-semibold"
+      :loading="pending"
+      @click="login"
+    >
       Sign in
     </UButton>
     <p class="text-[13px] text-gray-500">

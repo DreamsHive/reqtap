@@ -1,13 +1,32 @@
 <script setup lang="ts">
+import type { OverviewStats } from '~/composables/useReqtapApi'
+
 definePageMeta({ layout: 'dashboard' })
 useHead({ title: 'Overview · Reqtap' })
 
-const stats = [
-  { label: 'Total requests', value: '1.24M', delta: '12%', deltaUp: true, bars: [15, 20, 17.5, 27.5, 24, 31, 29] },
-  { label: 'Success rate', value: '99.2%', delta: '0.3%', deltaUp: true, bars: [25, 26, 25.5, 27, 26.5, 27.5, 28] },
-  { label: 'Avg latency', value: '48ms', delta: '5ms', deltaUp: false, bars: [30, 27.5, 29, 25, 26, 24, 23] },
-  { label: 'Active endpoints', value: '28', delta: '3', deltaUp: true, bars: [10, 11, 12, 12, 13, 13.5, 14] },
-]
+const data = ref<OverviewStats | null>(null)
+const overview = computed(
+  () =>
+    data.value ?? {
+      totalRequests: 0,
+      activeEndpoints: 0,
+      successRate: 1,
+      averageLatencyMs: 0,
+      topEndpoints: [],
+      statusCodes: {},
+    }
+)
+
+onMounted(async () => {
+  data.value = await authFetch<OverviewStats>('/api/stats')
+})
+
+const stats = computed(() => [
+  { label: 'Total requests', value: overview.value.totalRequests.toLocaleString(), delta: 'live', deltaUp: true, bars: [8, 12, 10, 16, 14, 18, 20] },
+  { label: 'Success rate', value: `${(overview.value.successRate * 100).toFixed(1)}%`, delta: '2xx', deltaUp: true, bars: [18, 18, 19, 20, 20, 21, 22] },
+  { label: 'Avg latency', value: `${overview.value.averageLatencyMs}ms`, delta: 'p50', deltaUp: false, bars: [18, 16, 15, 14, 13, 12, 10] },
+  { label: 'Active endpoints', value: overview.value.activeEndpoints.toLocaleString(), delta: 'now', deltaUp: true, bars: [8, 9, 10, 11, 11, 12, 13] },
+])
 
 // success (indigo) heights + failed (red) caps for the bar chart
 const chart = Array.from({ length: 30 }, (_, i) => {
@@ -15,20 +34,32 @@ const chart = Array.from({ length: 30 }, (_, i) => {
   return { success: base, failed: 5 + (i % 5) * 2 }
 })
 
-const topEndpoints = [
-  { name: 'stripe-prod', count: '842k', pct: 100, color: 'bg-brand-500' },
-  { name: 'github-ci', count: '291k', pct: 35, color: 'bg-method-get' },
-  { name: 'shopify-orders', count: '68k', pct: 8, color: 'bg-green-500' },
-  { name: 'clerk-users', count: '41k', pct: 5, color: 'bg-method-put' },
-  { name: 'sendgrid-events', count: '22k', pct: 3, color: 'bg-violet-500' },
-]
+const topEndpoints = computed(() => {
+  const max = Math.max(...overview.value.topEndpoints.map((endpoint) => endpoint.count), 1)
+  const colors = ['bg-brand-500', 'bg-method-get', 'bg-green-500', 'bg-method-put', 'bg-violet-500']
+  return overview.value.topEndpoints.map((endpoint, index) => ({
+    name: endpoint.name,
+    count: endpoint.count.toLocaleString(),
+    pct: Math.max((endpoint.count / max) * 100, 2),
+    color: colors[index] ?? 'bg-brand-500',
+  }))
+})
 
-const statusCodes = [
-  { label: '2xx Success', pct: '94%', width: 94, dot: 'bg-green-500' },
-  { label: '4xx Client', pct: '4.5%', width: 4.5, dot: 'bg-method-put' },
-  { label: '5xx Server', pct: '1.2%', width: 1.2, dot: 'bg-red-500' },
-  { label: '3xx Redirect', pct: '0.3%', width: 0.3, dot: 'bg-method-get' },
-]
+const statusCodes = computed(() => {
+  const total = Object.values(overview.value.statusCodes).reduce((sum, count) => sum + count, 0) || 1
+  const labels: Record<string, { label: string; dot: string }> = {
+    '2xx': { label: '2xx Success', dot: 'bg-green-500' },
+    '3xx': { label: '3xx Redirect', dot: 'bg-method-get' },
+    '4xx': { label: '4xx Client', dot: 'bg-method-put' },
+    '5xx': { label: '5xx Server', dot: 'bg-red-500' },
+  }
+
+  return Object.entries(labels).map(([key, meta]) => {
+    const count = overview.value.statusCodes[key] ?? 0
+    const width = (count / total) * 100
+    return { label: meta.label, pct: `${width.toFixed(1)}%`, width, dot: meta.dot }
+  })
+})
 </script>
 
 <template>
@@ -86,6 +117,7 @@ const statusCodes = [
     <div class="flex gap-4">
       <div class="flex flex-1 flex-col gap-4 rounded-[14px] border border-[var(--color-line)] bg-white px-[22px] pb-[22px] pt-5">
         <h2 class="text-base font-semibold text-ink">Top endpoints</h2>
+        <EmptyState v-if="!topEndpoints.length" icon="i-lucide-webhook" title="No traffic yet" description="Captured requests will appear here." />
         <div v-for="e in topEndpoints" :key="e.name" class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium text-ink">{{ e.name }}</span>

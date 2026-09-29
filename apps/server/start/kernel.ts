@@ -31,8 +31,12 @@ server.use([
 /**
  * The router middleware stack runs middleware on all the HTTP
  * requests with a registered route.
+ *
+ * Reqtap intentionally does not mount the bodyparser globally. Ingest
+ * endpoints need the exact raw body bytes for provider signature checks.
+ * JSON API routes parse their small bodies explicitly in route handlers.
  */
-router.use([() => import('@adonisjs/core/bodyparser_middleware')])
+router.use([])
 
 /**
  * Named middleware collection must be explicitly assigned to

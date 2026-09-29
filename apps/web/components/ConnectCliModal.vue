@@ -1,11 +1,15 @@
 <script setup lang="ts">
-defineProps<{ open?: boolean }>()
+const props = defineProps<{ open?: boolean; token?: string }>()
 defineEmits<{ 'update:open': [boolean] }>()
 
-const steps = [
-  { n: 1, title: 'Install the CLI', desc: 'Run it instantly with npx — no install needed.', cmd: 'npx @reqtap/cli login' },
-  { n: 2, title: 'Forward this endpoint', desc: 'Point incoming webhooks to your local server.', cmd: 'npx wh forward abc123 --to localhost:3000' },
-]
+const steps = computed(() => [
+  { n: 1, title: 'Install the CLI', desc: 'Run it instantly with npx — no install needed.', cmd: `npx @reqtap/cli login --apiBase ${useApiBase()}` },
+  { n: 2, title: 'Forward this endpoint', desc: 'Point incoming webhooks to your local server.', cmd: `npx @reqtap/cli forward ${props.token || '<token>'} --to localhost:3000` },
+])
+
+async function copy(command: string) {
+  await navigator.clipboard.writeText(command)
+}
 </script>
 
 <template>
@@ -25,7 +29,7 @@ const steps = [
             <p class="text-[13px] text-gray-500">{{ s.desc }}</p>
             <div class="flex items-center justify-between rounded-[9px] bg-[#0c0c12] py-3 pl-4 pr-2.5">
               <span class="rt-mono text-[13px]"><span class="font-semibold text-brand-500">$ </span><span class="text-[#e7e7ec]">{{ s.cmd }}</span></span>
-              <button class="rounded-md bg-white/[0.08] px-2.5 py-1.5 text-[12px] font-medium text-[#e7e7ec] hover:bg-white/15">Copy</button>
+              <button class="rounded-md bg-white/[0.08] px-2.5 py-1.5 text-[12px] font-medium text-[#e7e7ec] hover:bg-white/15" @click="copy(s.cmd)">Copy</button>
             </div>
           </div>
         </div>

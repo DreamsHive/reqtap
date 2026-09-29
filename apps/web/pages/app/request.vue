@@ -38,7 +38,7 @@ const bodyLines = [
           :key="t"
           class="pb-2.5 text-sm font-medium transition-colors"
           :class="activeTab === t ? 'border-b-2 border-brand-500 font-semibold text-ink' : 'text-gray-500'"
-          @click="activeTab = t"
+          @click="() => { activeTab = t }"
         >{{ t }}</button>
       </div>
 
@@ -51,7 +51,7 @@ const bodyLines = [
           block
           icon="i-lucide-arrow-right"
           class="rounded-[10px] py-3.5 text-sm font-semibold"
-          @click="showForward = true"
+          @click="() => { showForward = true }"
         >Forward to localhost</UButton>
         <UButton
           block
@@ -59,7 +59,7 @@ const bodyLines = [
           variant="outline"
           icon="i-lucide-rotate-ccw"
           class="rounded-[10px] bg-white py-3.5 text-sm font-semibold text-ink"
-          @click="showReplay = true"
+          @click="() => { showReplay = true }"
         >Replay</UButton>
       </div>
     </div>

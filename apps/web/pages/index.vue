@@ -12,7 +12,7 @@ const requests = [
 ]
 
 const features = [
-  { icon: 'i-lucide-eye', title: 'Real-time inspection', body: 'Requests appear the instant they arrive over WebSocket — no refresh, no polling.' },
+  { icon: 'i-lucide-eye', title: 'Real-time inspection', body: 'Requests appear the instant they arrive over a live SSE stream — no refresh, no polling.' },
   { icon: 'i-lucide-arrow-right', title: 'Forward to localhost', body: 'One command — npx wh forward — streams live webhooks straight to your dev server.' },
   { icon: 'i-lucide-repeat', title: 'Replay any request', body: 'Resend a captured payload as many times as you need to debug your handler.' },
   { icon: 'i-lucide-shield-check', title: 'Signature verification', body: 'Auto-detect & verify Stripe, GitHub and Shopify signatures with a clear pass/fail badge.' },

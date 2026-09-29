@@ -23,11 +23,11 @@ const sigBody = [
 
     <!-- Modal triggers -->
     <div class="flex flex-wrap gap-2.5">
-      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="showNewEndpoint = true">New endpoint</UButton>
-      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="showConnectCli = true">Connect CLI</UButton>
-      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="showApiKey = true">Create API key</UButton>
-      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="showInvite = true">Invite member</UButton>
-      <UButton variant="outline" color="error" class="rounded-lg bg-white" @click="showDelete = true">Delete dialog</UButton>
+      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="() => { showNewEndpoint = true }">New endpoint</UButton>
+      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="() => { showConnectCli = true }">Connect CLI</UButton>
+      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="() => { showApiKey = true }">Create API key</UButton>
+      <UButton variant="outline" color="neutral" class="rounded-lg bg-white text-ink" @click="() => { showInvite = true }">Invite member</UButton>
+      <UButton variant="outline" color="error" class="rounded-lg bg-white" @click="() => { showDelete = true }">Delete dialog</UButton>
     </div>
 
     <div class="grid grid-cols-2 gap-6">
